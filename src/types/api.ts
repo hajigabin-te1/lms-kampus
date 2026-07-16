@@ -21,6 +21,7 @@ export interface User {
   name: string;
   email: string;
   prodi: string; // Contoh: "Administrasi Bisnis"
+  nim: string;
 }
 
 // Definisi data Jadwal / Mata Kuliah

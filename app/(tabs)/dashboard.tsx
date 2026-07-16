@@ -1,9 +1,11 @@
 import { Ionicons } from "@expo/vector-icons"; // Icon bawaan dari Expo
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
@@ -24,6 +26,7 @@ export default function DashboardScreen() {
   const router = useRouter();
   const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [menuVisible, setMenuVisible] = useState(false);
 
   // ambil data user halaman saat ini
   useEffect(() => {
@@ -73,79 +76,150 @@ export default function DashboardScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      <LinearGradient
+        colors={["#ECECF8", "#4caff0ff"]}
+        style={{ flex: 1 }}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       >
-        {/* Header Section */}
-        <View style={styles.header}>
-          <View>
-            {/* Tampilkan nama user secara dinamis, gunakan optional chaining (?) untuk mencegah error jika data kosong */}
-            <Text style={styles.greeting}>
-              Halo, {user?.name || "Mahasiswa"}! 👋
-            </Text>
-            <Text style={styles.subGreeting}>
-              {user?.email || "Selamat datang di LMS Kampus"}
-            </Text>
-          </View>
-          <View style={styles.avatarContainer}>
-            <Ionicons name="person" size={24} color="#3173C4" />
-          </View>
-        </View>
-
-        {/* Ringkasan / Summary Cards */}
-        <View style={styles.summaryContainer}>
-          <View style={styles.summaryCard}>
-            <View style={[styles.iconBox, { backgroundColor: "#C7F2DC" }]}>
-              <Ionicons name="book" size={24} color="#3173C4" />
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Header Section */}
+          <View style={styles.header}>
+            <View>
+              {/* Tampilkan nama user secara dinamis, gunakan optional chaining (?) untuk mencegah error jika data kosong */}
+              <Text style={styles.greeting}>
+                Halo, {user?.name || "Mahasiswa"}! 👋
+              </Text>
+              <Text style={styles.subGreeting}>
+                {user?.email || "Selamat datang di LMS Kampus"}
+              </Text>
             </View>
-            <Text style={styles.summaryNumber}>6</Text>
-            <Text style={styles.summaryText}>Mata Kuliah</Text>
+            <TouchableOpacity
+              style={styles.avatarContainer}
+              onPress={() => setMenuVisible(true)}
+            >
+              <Ionicons name="person" size={24} color="#3173C4" />
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.summaryCard}>
-            <View style={[styles.iconBox, { backgroundColor: "#ffe4e6" }]}>
-              <Ionicons name="document-text" size={24} color="#e11d48" />
+          {/* Ringkasan / Summary Cards */}
+          <View style={styles.summaryContainer}>
+            <View style={styles.summaryCard}>
+              <View style={[styles.iconBox, { backgroundColor: "#C7F2DC" }]}>
+                <Ionicons name="book" size={24} color="#3173C4" />
+              </View>
+              <Text style={styles.summaryNumber}>6</Text>
+              <Text style={styles.summaryText}>Mata Kuliah</Text>
             </View>
-            <Text style={styles.summaryNumber}>2</Text>
-            <Text style={styles.summaryText}>Tugas Aktif</Text>
+
+            <View style={styles.summaryCard}>
+              <View style={[styles.iconBox, { backgroundColor: "#ffe4e6" }]}>
+                <Ionicons name="document-text" size={24} color="#e11d48" />
+              </View>
+              <Text style={styles.summaryNumber}>2</Text>
+              <Text style={styles.summaryText}>Tugas Aktif</Text>
+            </View>
           </View>
-        </View>
 
-        {/* Seksi Mata Kuliah Terkini (Dummy Data) */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Jadwal Hari Ini</Text>
+          {/* Seksi Mata Kuliah Terkini (Dummy Data) */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Jadwal Hari Ini</Text>
 
-          <TouchableOpacity style={styles.courseCard}>
-            <View style={styles.courseIcon}>
-              <Ionicons name="laptop-outline" size={24} color="#ffffff" />
+            <TouchableOpacity style={styles.courseCard}>
+              <View style={styles.courseIcon}>
+                <Ionicons name="laptop-outline" size={24} color="#ffffff" />
+              </View>
+              <View style={styles.courseInfo}>
+                <Text style={styles.courseTitle}>Pemrograman Mobile</Text>
+                <Text style={styles.courseTime}>08:00 - 10:30 WITA</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.courseCard}>
+              <View style={styles.courseIcon}>
+                <Ionicons name="business-outline" size={24} color="#ffffff" />
+              </View>
+              <View style={styles.courseInfo}>
+                <Text style={styles.courseTitle}>Administrasi Bisnis</Text>
+                <Text style={styles.courseTime}>11:00 - 13:00 WITA</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+
+        {/* Modal Dropdown Profil */}
+        <Modal
+          visible={menuVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setMenuVisible(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setMenuVisible(false)}
+          >
+            <View style={styles.dropdownMenu}>
+              <View style={styles.menuItem}>
+                <Ionicons
+                  name="card-outline"
+                  size={20}
+                  color="#6b7280"
+                  style={styles.menuIcon}
+                />
+                <View>
+                  <Text style={styles.menuLabel}>NIM</Text>
+                  <Text style={styles.menuValue}>{user?.nim || "-"}</Text>
+                </View>
+              </View>
+
+              <View style={styles.menuItem}>
+                <Ionicons
+                  name="school-outline"
+                  size={20}
+                  color="#6b7280"
+                  style={styles.menuIcon}
+                />
+                <View>
+                  <Text style={styles.menuLabel}>Program Studi</Text>
+                  <Text style={styles.menuValue}>{user?.prodi || "-"}</Text>
+                </View>
+              </View>
+
+              <View style={styles.menuItem}>
+                <Ionicons
+                  name="checkmark-circle-outline"
+                  size={20}
+                  color="#6b7280"
+                  style={styles.menuIcon}
+                />
+                <View>
+                  <Text style={styles.menuLabel}>Status</Text>
+                  <Text style={[styles.menuValue, { color: "#10b981" }]}>
+                    Aktif
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.menuDivider} />
+
+              <TouchableOpacity
+                style={styles.dropdownLogoutButton}
+                onPress={handleLogout}
+              >
+                <Ionicons name="log-out-outline" size={20} color="#ef4444" />
+                <Text style={styles.dropdownLogoutText}>Keluar Akun</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.courseInfo}>
-              <Text style={styles.courseTitle}>Pemrograman Mobile</Text>
-              <Text style={styles.courseTime}>08:00 - 10:30 WITA</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.courseCard}>
-            <View style={styles.courseIcon}>
-              <Ionicons name="business-outline" size={24} color="#ffffff" />
-            </View>
-            <View style={styles.courseInfo}>
-              <Text style={styles.courseTitle}>Administrasi Bisnis</Text>
-              <Text style={styles.courseTime}>11:00 - 13:00 WITA</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Tombol Logout */}
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Ionicons name="log-out-outline" size={20} color="#ef4444" />
-          <Text style={styles.logoutText}>Keluar Akun</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        </Modal>
+      </LinearGradient>
     </SafeAreaView>
   );
 }
@@ -153,7 +227,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f3f4f6", // Abu-abu sangat terang untuk background
+    backgroundColor: "#ECECF8", // Match the top of the gradient
   },
   scrollContent: {
     padding: 20,
@@ -280,5 +354,60 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     marginLeft: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.15)",
+    justifyContent: "flex-start",
+    alignItems: "flex-end",
+    paddingTop: 80, // Sesuaikan dengan tinggi header
+    paddingRight: 20,
+  },
+  dropdownMenu: {
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
+    padding: 20,
+    width: 250,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  menuIcon: {
+    marginRight: 12,
+    width: 24,
+    textAlign: "center",
+  },
+  menuLabel: {
+    fontSize: 12,
+    color: "#9ca3af",
+  },
+  menuValue: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#1f2937",
+    marginTop: 2,
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: "#f3f4f6",
+    marginVertical: 10,
+  },
+  dropdownLogoutButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  dropdownLogoutText: {
+    color: "#ef4444", // Merah
+    fontWeight: "bold",
+    fontSize: 15,
+    marginLeft: 12,
   },
 });

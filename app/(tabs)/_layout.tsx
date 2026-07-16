@@ -1,5 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
+import { Platform } from "react-native";
 
 export default function TabsLayout() {
   return (
@@ -14,9 +15,9 @@ export default function TabsLayout() {
           backgroundColor: "#ffffff",
           borderTopWidth: 1,
           borderTopColor: "#e5e7eb",
-          height: 60,
-          paddingBottom: 8,
+          minHeight: Platform.OS === "ios" ? 85 : 65,
           paddingTop: 8,
+          paddingBottom: Platform.OS === "ios" ? 25 : 10,
         },
         // Sembunyikan header bawaan Expo Router karena kita sudah bikin header sendiri di dashboard
         headerShown: false,
@@ -26,7 +27,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: "Beranda",
+          title: "Dashboard",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "home" : "home-outline"}
@@ -38,17 +39,58 @@ export default function TabsLayout() {
       />
 
       {/* Kamu bisa tambah tab lain di bawah sini nanti, contoh: */}
-      {/* 
       <Tabs.Screen
-        name="courses"
+        name="kelas"
         options={{
-          title: "Kelas",
+          title: "Class",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "book" : "book-outline"} size={22} color={color} />
+            <Ionicons
+              name={focused ? "book" : "book-outline"}
+              size={22}
+              color={color}
+            />
           ),
         }}
-      /> 
-      */}
+      />
+      <Tabs.Screen
+        name="jadwal"
+        options={{
+          title: "Schedule",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "calendar" : "calendar-outline"}
+              size={22}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="nilai"
+        options={{
+          title: "Grades",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "medal" : "medal-outline"}
+              size={22}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="pengaturan"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "settings" : "settings-outline"}
+              size={22}
+              color={color}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

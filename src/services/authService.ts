@@ -1,5 +1,6 @@
 import { LoginData } from "@/src/types/api";
 import * as SecureStore from "expo-secure-store";
+import { Platform } from "react-native";
 //import api from "./api";
 
 // Bikin interface untuk struktur yang ditarik dari Laravel
@@ -48,14 +49,23 @@ export const loginUser = async (
       token: "1|dummy_token_sementara_buat_ngetes",
       user: {
         id: 101,
-        name: "Budi Santoso",
+        name: "Haji gabin",
         email: "mhs@stia.ac.id",
         prodi: "Administrasi Bisnis",
+        nim: "2088121",
       },
     };
 
     // 4. Simpan token ke memori HP persis seperti aslinya
-    await SecureStore.setItemAsync("userToken", dummyData.token);
+    if (Platform.OS === "web") {
+      try {
+        localStorage.setItem("userToken", dummyData.token);
+      } catch (e) {
+        console.warn("localStorage is not available");
+      }
+    } else {
+      await SecureStore.setItemAsync("userToken", dummyData.token);
+    }
 
     return dummyData;
   } else {

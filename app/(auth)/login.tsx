@@ -13,13 +13,17 @@ import {
   View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-// import { login } from "../services/authService";
-import { loginUser } from "../services/authService";
+// import { login } from "../../src/services/authService";
+import { loginUser } from "@/src/services/authService";
+import { Ionicons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
+import Toast from "react-native-toast-message";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -34,17 +38,30 @@ export default function LoginScreen() {
 
     try {
       // Panggil API service untuk login
-      // const data = await login(email, password);
-      const data = await loginUser(email, password);
+      const data = await loginUser(email.trim(), password.trim());
 
-      await SecureStore.setItemAsync("userData", JSON.stringify(data.user));
+      if (Platform.OS === "web") {
+        try {
+          localStorage.setItem("userData", JSON.stringify(data.user));
+        } catch (e) {
+          console.warn("localStorage is not available");
+        }
+      } else {
+        await SecureStore.setItemAsync("userData", JSON.stringify(data.user));
+      }
 
       console.log("Berhasil login : ", data.user.name);
 
-      router.replace("/(tabs)/dashboard" as any);
+      router.replace("/(auth)/loading");
     } catch (error: any) {
       console.log("error gagal login : ", error.message);
-      alert("error.message");
+      Toast.show({
+        type: "error",
+        text1: "Login Gagal",
+        text2: "Silahkan cek kembali email atau password anda",
+        position: "top",
+        visibilityTime: 3000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -52,9 +69,10 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaProvider>
+      <StatusBar style="light" />
       {/* Background Gradasi */}
       <LinearGradient
-        colors={["#3173C4", "#C7F2DC"]}
+        colors={["#ECECF8", "#0080FF"]}
         style={styles.gradientBackground}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -93,14 +111,28 @@ export default function LoginScreen() {
 
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Password</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Masukkan Password"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                    placeholderTextColor="#9ca3af"
-                  />
+                  <View style={styles.passwordWrapper}>
+                    <TextInput
+                      style={styles.passwordInput}
+                      placeholder="Masukkan Password"
+                      value={password}
+                      onChangeText={setPassword}
+                      // secureTextEntry akan bernilai true (tersembunyi) jika showPassword bernilai false
+                      secureTextEntry={!showPassword}
+                      placeholderTextColor="#9ca3af"
+                    />
+                    {/* Tombol Ikon Mata */}
+                    <TouchableOpacity
+                      style={styles.eyeIcon}
+                      onPress={() => setShowPassword(!showPassword)}
+                    >
+                      <Ionicons
+                        name={showPassword ? "eye-off-outline" : "eye-outline"}
+                        size={22}
+                        color="#6b7280"
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
 
                 <TouchableOpacity
@@ -167,7 +199,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#3173C4", // Disesuaikan dengan warna primer
+    color: "#1111C2", // Secondary 30%
     marginBottom: 6,
   },
   subtitle: {
@@ -198,16 +230,16 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   forgotPasswordText: {
-    color: "#3173C4", // Disesuaikan dengan warna primer
+    color: "#2078E8", // Aksen 10%
     fontSize: 14,
     fontWeight: "600",
   },
   loginButton: {
-    backgroundColor: "#3173C4", // Menggunakan warna dari request
+    backgroundColor: "#1111C2", // Secondary 30%
     borderRadius: 10,
     paddingVertical: 16,
     alignItems: "center",
-    shadowColor: "#3173C4",
+    shadowColor: "#1111C2",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -220,5 +252,26 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  // --- STYLING BARU UNTUK INPUT PASSWORD ---
+  passwordWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f9fafb",
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    borderRadius: 10,
+  },
+  passwordInput: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 15,
+    color: "#1f2937",
+  },
+  eyeIcon: {
+    paddingHorizontal: 14,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
