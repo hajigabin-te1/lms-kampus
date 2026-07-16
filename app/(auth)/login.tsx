@@ -3,17 +3,18 @@ import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import React, { useState } from "react";
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { login } from "../services/authService";
+// import { login } from "../services/authService";
+import { loginUser } from "../services/authService";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -33,7 +34,8 @@ export default function LoginScreen() {
 
     try {
       // Panggil API service untuk login
-      const data = await login(email, password);
+      // const data = await login(email, password);
+      const data = await loginUser(email, password);
 
       await SecureStore.setItemAsync("userData", JSON.stringify(data.user));
 
@@ -68,7 +70,7 @@ export default function LoginScreen() {
                 <View style={styles.headerContainer}>
                   {/* Pastikan path logo STIA Indonesia kamu sesuai */}
                   <Image
-                    source={require("../assets/logo-polije.png")}
+                    source={require("../../assets/images/logo-STIA.png")}
                     style={styles.logo}
                     resizeMode="contain"
                   />
