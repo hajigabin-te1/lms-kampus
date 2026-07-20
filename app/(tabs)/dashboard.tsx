@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -10,8 +10,12 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Animated,
+  Dimensions,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BlurView } from "expo-blur";
 
 interface UserData {
   id: number;
@@ -29,6 +33,28 @@ export default function DashboardScreen() {
   // Modals state
   const [menuVisible, setMenuVisible] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
+
+  // Animation refs
+  const screenWidth = Dimensions.get("window").width;
+  const slideAnim = useRef(new Animated.Value(-screenWidth)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const openSidebar = () => {
+    setSidebarVisible(true);
+    Animated.parallel([
+      Animated.timing(slideAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true })
+    ]).start();
+  };
+
+  const closeSidebar = () => {
+    Animated.parallel([
+      Animated.timing(slideAnim, { toValue: -screenWidth, duration: 300, useNativeDriver: true }),
+      Animated.timing(fadeAnim, { toValue: 0, duration: 300, useNativeDriver: true })
+    ]).start(() => {
+      setSidebarVisible(false);
+    });
+  };
 
   // Theme state
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -101,7 +127,7 @@ export default function DashboardScreen() {
           {/* Top Header: Hamburger on Left, Theme & Profile on Right */}
           <View className="flex-row justify-between items-center mt-2 mb-6">
             <TouchableOpacity
-              onPress={() => setSidebarVisible(true)}
+              onPress={openSidebar}
               className={`p-2 rounded-full ${isDarkMode ? "bg-gray-700" : "bg-white/50"}`}
             >
               <Ionicons
@@ -144,7 +170,11 @@ export default function DashboardScreen() {
 
           {/* Statistics Card (Glassmorphism / Modern Semi-Transparent) */}
           <LinearGradient
-            colors={["rgba(200,200,200,0.2)", "rgba(225,225,225,0.5)"]}
+            colors={
+              isDarkMode
+                ? ["rgba(255,255,255,0.15)", "rgba(255,255,255,0.05)"]
+                : ["rgba(255,255,255,0.7)", "rgba(255,255,255,0.4)"]
+            }
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{
@@ -152,52 +182,52 @@ export default function DashboardScreen() {
               padding: 20,
               marginBottom: 24,
               borderWidth: 1,
-              borderColor: "rgba(255,255,255,0.2)",
+              borderColor: isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)",
             }}
           >
             {/* Top right Dropdown (Semester) */}
             <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-white text-sm font-semibold tracking-wider">
+              <Text className={`${isDarkMode ? "text-white/80" : "text-gray-600"} text-sm font-semibold tracking-wider`}>
                 Semester Aktif
               </Text>
-              <TouchableOpacity className="flex-row items-center bg-white/20 px-3 py-1.5 rounded-full">
-                <Text className="text-white text-xs font-bold mr-1">
+              <TouchableOpacity className={`flex-row items-center px-3 py-1.5 rounded-full ${isDarkMode ? "bg-white/20" : "bg-white/50"}`}>
+                <Text className={`${isDarkMode ? "text-white" : "text-gray-800"} text-xs font-bold mr-1`}>
                   2025/2026 Genap
                 </Text>
-                <Ionicons name="chevron-down" size={14} color="#fff" />
+                <Ionicons name="chevron-down" size={14} color={isDarkMode ? "#fff" : "#1f2937"} />
               </TouchableOpacity>
             </View>
 
             {/* Centered: IPS & IPK */}
             <View className="flex-row justify-center items-center mb-6">
               <View className="items-center px-4">
-                <Text className="text-white/80 text-xs font-medium mb-1">
+                <Text className={`${isDarkMode ? "text-white/80" : "text-gray-600"} text-xs font-medium mb-1`}>
                   IPK
                 </Text>
-                <Text className="text-white text-4xl font-extrabold">3.85</Text>
+                <Text className={`${isDarkMode ? "text-white" : "text-gray-800"} text-4xl font-extrabold`}>3.85</Text>
               </View>
 
-              <View className="w-[1px] h-12 bg-white/30 mx-4" />
+              <View className={`w-[1px] h-12 mx-4 ${isDarkMode ? "bg-white/30" : "bg-gray-300"}`} />
 
               <View className="items-center px-4">
-                <Text className="text-white/80 text-xs font-medium mb-1">
+                <Text className={`${isDarkMode ? "text-white/80" : "text-gray-600"} text-xs font-medium mb-1`}>
                   IPS
                 </Text>
-                <Text className="text-white text-4xl font-extrabold">3.90</Text>
+                <Text className={`${isDarkMode ? "text-white" : "text-gray-800"} text-4xl font-extrabold`}>3.90</Text>
               </View>
             </View>
 
             {/* Bottom: OBE Curriculum Indicator */}
             {isOBE && (
-              <View className="flex-row justify-between items-center bg-white/10 p-3 rounded-2xl border border-white/10">
+              <View className={`flex-row justify-between items-center p-3 rounded-2xl border ${isDarkMode ? "bg-white/10 border-white/10" : "bg-white/40 border-white/40"}`}>
                 <View className="flex-row items-center">
-                  <Ionicons name="ribbon" size={20} color="#fbbf24" />
-                  <Text className="text-white text-sm ml-2 font-medium">
+                  <Ionicons name="ribbon" size={20} color={isDarkMode ? "#fbbf24" : "#f59e0b"} />
+                  <Text className={`${isDarkMode ? "text-white" : "text-gray-800"} text-sm ml-2 font-medium`}>
                     Kurikulum OBE
                   </Text>
                 </View>
-                <TouchableOpacity className="bg-white/20 px-4 py-1.5 rounded-full">
-                  <Text className="text-white text-xs font-bold">
+                <TouchableOpacity className={`px-4 py-1.5 rounded-full ${isDarkMode ? "bg-white/20" : "bg-white/60"}`}>
+                  <Text className={`${isDarkMode ? "text-white" : "text-gray-800"} text-xs font-bold`}>
                     Lihat OBE
                   </Text>
                 </TouchableOpacity>
@@ -345,20 +375,36 @@ export default function DashboardScreen() {
         <Modal
           visible={sidebarVisible}
           transparent={true}
-          animationType="slide"
-          onRequestClose={() => setSidebarVisible(false)}
+          animationType="none"
+          onRequestClose={closeSidebar}
         >
           <View className="flex-1 flex-row">
+            {/* Overlay Area with BlurView */}
+            <Animated.View style={{ ...StyleSheet.absoluteFillObject, opacity: fadeAnim }}>
+              <TouchableOpacity activeOpacity={1} onPress={closeSidebar} style={{ flex: 1 }}>
+                <BlurView 
+                  intensity={20} 
+                  tint={isDarkMode ? "dark" : "light"} 
+                  style={{ flex: 1 }} 
+                />
+              </TouchableOpacity>
+            </Animated.View>
+
             {/* Sidebar Content */}
-            <View
-              className={`w-3/4 h-full ${isDarkMode ? "bg-gray-900" : "bg-white"} p-6 shadow-2xl`}
+            <Animated.View
+              style={{
+                transform: [{ translateX: slideAnim }],
+                width: '75%',
+                height: '100%'
+              }}
+              className={`${isDarkMode ? "bg-gray-900" : "bg-white"} p-6 shadow-2xl`}
             >
               <View className="flex-row justify-between items-center mb-8 mt-10">
                 <Text className={`text-2xl font-bold ${textColor}`}>
                   Menu Utama
                 </Text>
                 <TouchableOpacity
-                  onPress={() => setSidebarVisible(false)}
+                  onPress={closeSidebar}
                   className="p-2"
                 >
                   <Ionicons
@@ -412,14 +458,7 @@ export default function DashboardScreen() {
                   Pengaturan
                 </Text>
               </TouchableOpacity>
-            </View>
-
-            {/* Overlay Area to close sidebar */}
-            <TouchableOpacity
-              className="flex-1 bg-black/30"
-              activeOpacity={1}
-              onPress={() => setSidebarVisible(false)}
-            />
+            </Animated.View>
           </View>
         </Modal>
 
