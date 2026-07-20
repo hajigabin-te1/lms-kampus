@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ScrollView,
@@ -14,59 +15,73 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const ACTIVE_CLASSES = [
   {
     id: 1,
-    name: "Pemrograman Mobile",
-    lecturer: "Budi Santoso, M.Kom",
-    label: "A",
+    name: "Psikologi Sosial",
+    lecturer: "Abd. Halim, S.Kom, M.Kom",
+    label: "B",
     type: "Reguler",
     sks: 3,
+    hari: "Senin",
+    jam: "11.00 - 12.50",
   },
   {
     id: 2,
-    name: "Administrasi Bisnis",
-    lecturer: "Siti Aminah, M.B.A",
+    name: "Filsafat Logika",
+    lecturer: "Nida Urahmah, M.Pd",
     label: "B",
     type: "Reguler",
     sks: 3,
+    hari: "Senin",
+    jam: "09.00 - 10.50",
   },
   {
     id: 3,
-    name: "Sistem Basis Data",
-    lecturer: "Dr. Hendra",
-    label: "A",
-    type: "Non Reguler",
-    sks: 3,
-  },
-  {
-    id: 4,
-    name: "Matematika Diskrit",
-    lecturer: "Andi Wijaya, M.Si",
-    label: "C",
-    type: "Reguler",
-    sks: 3,
-  },
-  {
-    id: 5,
-    name: "Pengembangan Web",
-    lecturer: "Budi Santoso, M.Kom",
-    label: "A",
-    type: "Reguler",
-    sks: 4,
-  },
-  {
-    id: 6,
-    name: "Etika Profesi",
-    lecturer: "Dra. Ratna",
+    name: "Kewarganegaraan",
+    lecturer: "Siti Paulina, M.Pd",
     label: "B",
     type: "Reguler",
     sks: 2,
+    hari: "Selasa",
+    jam: "11.00 - 12.50",
+  },
+  {
+    id: 4,
+    name: "Sistem Informasi Manajemen",
+    lecturer: "Ni Made Musiyani Anjasmari, M.AP",
+    label: "B",
+    type: "Reguler",
+    sks: 3,
+    hari: "Selasa",
+    jam: "09.00 - 10.50",
+  },
+  {
+    id: 5,
+    name: "Kebijakan Publik",
+    lecturer: "Barkatullah, S.Sos, MA",
+    label: "B",
+    type: "Reguler",
+    sks: 3,
+    hari: "Rabu",
+    jam: "09.00 - 10.50",
+  },
+  {
+    id: 6,
+    name: "Statistik Administrasi Publik",
+    lecturer: "Nor Ainah, M.M",
+    label: "B",
+    type: "Reguler",
+    sks: 3,
+    hari: "Rabu",
+    jam: "11.00 - 12.50",
   },
   {
     id: 7,
-    name: "Jaringan Komputer",
-    lecturer: "Rizky Akbar, M.T",
-    label: "A",
-    type: "Non Reguler",
+    name: "Manajemen Publik",
+    lecturer: "Norhidayah, S.Sos, MA",
+    label: "B",
+    type: "Reguler",
     sks: 3,
+    hari: "Kamis",
+    jam: "09.00 - 10.50",
   },
 ];
 
@@ -78,6 +93,8 @@ const HISTORY_CLASSES = [
     label: "A",
     type: "Reguler",
     sks: 3,
+    hari: "Senin",
+    jam: "11.00 - 12.50",
   },
   {
     id: 102,
@@ -86,16 +103,21 @@ const HISTORY_CLASSES = [
     label: "A",
     type: "Reguler",
     sks: 2,
+    hari: "Senin",
+    jam: "09.00 - 10.50",
   },
 ];
 
 export default function KelasScreen() {
   // State untuk mengontrol tab yang aktif: 'semester_ini' atau 'riwayat'
   const [activeTab, setActiveTab] = useState("semester_ini");
-
+  const router = useRouter();
   // Komponen Card untuk daftar kelas agar bisa dipakai berulang
   const ClassCard = ({ item }: { item: any }) => (
-    <View style={styles.classCard}>
+    <TouchableOpacity
+      onPress={() => router.push(`/class/${item.id}` as any)}
+      style={styles.classCard}
+    >
       <View style={styles.classCardHeader}>
         <Text style={styles.className}>{item.name}</Text>
         <View style={styles.classLabelBox}>
@@ -106,6 +128,13 @@ export default function KelasScreen() {
       <View style={styles.classDetailRow}>
         <Ionicons name="person-outline" size={16} color="#6b7280" />
         <Text style={styles.classLecturer}>{item.lecturer}</Text>
+      </View>
+
+      <View
+        style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}
+      >
+        <Text style={{ fontSize: 11, fontWeight: "bold" }}>{item.hari}, </Text>
+        <Text style={{ fontSize: 11, fontWeight: "bold" }}>{item.jam}</Text>
       </View>
 
       <View style={styles.classFooter}>
@@ -128,7 +157,7 @@ export default function KelasScreen() {
         </View>
         <Text style={styles.classSks}>{item.sks} SKS</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (

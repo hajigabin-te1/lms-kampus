@@ -1,3 +1,4 @@
+import "../src/styles/global.css";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Toast from "react-native-toast-message";
@@ -11,6 +12,7 @@ export default function RootLayout() {
         <Stack.Screen name="(auth)/loading" />
         <Stack.Screen name="(auth)/login" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="class/[id]" />
       </Stack>
       <Toast />
     </>

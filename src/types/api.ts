@@ -33,6 +33,21 @@ export interface Course {
   room: string; // Contoh: "Lab Komputer"
 }
 
+export interface ClassItem {
+  id: number;
+  name: string;
+  lecturer: string;
+  label: string;
+  type: string;
+  sks: number;
+}
+
+export interface ClassDetail extends ClassItem {
+  room: string;
+  schedule: string;
+  description: string;
+}
+
 // =========================================================================
 // 3. SPECIAL DATA STRUCTURES
 // =========================================================================

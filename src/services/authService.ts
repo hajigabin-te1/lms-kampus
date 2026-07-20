@@ -51,7 +51,7 @@ export const loginUser = async (
         id: 101,
         name: "Haji gabin",
         email: "mhs@stia.ac.id",
-        prodi: "Administrasi Bisnis",
+        prodi: "Administrasi Publik",
         nim: "2088121",
       },
     };
