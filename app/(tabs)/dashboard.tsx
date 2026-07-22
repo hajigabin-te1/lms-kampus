@@ -1,21 +1,22 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Animated,
+  Dimensions,
   Modal,
   ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Animated,
-  Dimensions,
-  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { BlurView } from "expo-blur";
 
 interface UserData {
   id: number;
@@ -26,9 +27,29 @@ interface UserData {
 }
 
 export default function DashboardScreen() {
+  const tabBarTinggi = useBottomTabBarHeight();
   const router = useRouter();
   const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const dummy_semester = [
+    "2025/2026 Genap",
+    "2025/2026 Ganjil",
+    "2024/2025 Genap",
+    "2024/2025 Ganjil",
+    "2023/2024 Genap",
+    "2023/2024 Ganjil",
+  ];
+  const menu = [
+    "Dashboard",
+    "Kelas Saya",
+    "Dosen PA",
+    "KRS & KHS",
+    "Jadwal & Presensi",
+    "Ujian CBT",
+    "Kurikulum",
+  ];
+  const [activeSemester, setActiveSemester] = useState(dummy_semester[0]);
+  const [semesterModalVisible, setSemesterModalVisible] = useState(false);
 
   // Modals state
   const [menuVisible, setMenuVisible] = useState(false);
@@ -42,15 +63,31 @@ export default function DashboardScreen() {
   const openSidebar = () => {
     setSidebarVisible(true);
     Animated.parallel([
-      Animated.timing(slideAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
-      Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true })
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
     ]).start();
   };
 
   const closeSidebar = () => {
     Animated.parallel([
-      Animated.timing(slideAnim, { toValue: -screenWidth, duration: 300, useNativeDriver: true }),
-      Animated.timing(fadeAnim, { toValue: 0, duration: 300, useNativeDriver: true })
+      Animated.timing(slideAnim, {
+        toValue: -screenWidth,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
     ]).start(() => {
       setSidebarVisible(false);
     });
@@ -122,6 +159,7 @@ export default function DashboardScreen() {
       >
         <ScrollView
           contentContainerClassName="p-5 pb-10"
+          contentContainerStyle={{ paddingBottom: tabBarTinggi + 20 }} //wajib di tambahkan pada setiap halaman
           showsVerticalScrollIndicator={false}
         >
           {/* Top Header: Hamburger on Left, Theme & Profile on Right */}
@@ -182,55 +220,140 @@ export default function DashboardScreen() {
               padding: 20,
               marginBottom: 24,
               borderWidth: 1,
-              borderColor: isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)",
+              borderColor: isDarkMode
+                ? "rgba(255,255,255,0.1)"
+                : "rgba(255,255,255,0.5)",
             }}
           >
             {/* Top right Dropdown (Semester) */}
             <View className="flex-row justify-between items-center mb-6">
-              <Text className={`${isDarkMode ? "text-white/80" : "text-gray-600"} text-sm font-semibold tracking-wider`}>
+              <Text
+                className={`${isDarkMode ? "text-white/80" : "text-gray-600"} text-sm font-semibold tracking-wider`}
+              >
                 Semester Aktif
               </Text>
-              <TouchableOpacity className={`flex-row items-center px-3 py-1.5 rounded-full ${isDarkMode ? "bg-white/20" : "bg-white/50"}`}>
-                <Text className={`${isDarkMode ? "text-white" : "text-gray-800"} text-xs font-bold mr-1`}>
-                  2025/2026 Genap
+              <TouchableOpacity
+                className={`flex-row items-center px-3 py-1.5 rounded-full ${isDarkMode ? "bg-white/20" : "bg-white/50"}`}
+                onPress={() => setSemesterModalVisible(true)}
+              >
+                <Text
+                  className={`${isDarkMode ? "text-white" : "text-gray-800"} text-xs font-bold mr-1`}
+                >
+                  {activeSemester}
                 </Text>
-                <Ionicons name="chevron-down" size={14} color={isDarkMode ? "#fff" : "#1f2937"} />
+
+                <Ionicons
+                  name="chevron-down"
+                  size={14}
+                  color={isDarkMode ? "#fff" : "#1f2937"}
+                />
               </TouchableOpacity>
             </View>
 
             {/* Centered: IPS & IPK */}
             <View className="flex-row justify-center items-center mb-6">
               <View className="items-center px-4">
-                <Text className={`${isDarkMode ? "text-white/80" : "text-gray-600"} text-xs font-medium mb-1`}>
+                <Text
+                  className={`${isDarkMode ? "text-white/80" : "text-gray-600"} text-xs font-medium mb-1`}
+                >
                   IPK
                 </Text>
-                <Text className={`${isDarkMode ? "text-white" : "text-gray-800"} text-4xl font-extrabold`}>3.85</Text>
+                <Text
+                  className={`${isDarkMode ? "text-white" : "text-gray-800"} text-4xl font-extrabold`}
+                >
+                  3.85
+                </Text>
               </View>
 
-              <View className={`w-[1px] h-12 mx-4 ${isDarkMode ? "bg-white/30" : "bg-gray-300"}`} />
+              <View
+                className={`w-[1px] h-12 mx-4 ${isDarkMode ? "bg-white/30" : "bg-gray-300"}`}
+              />
 
               <View className="items-center px-4">
-                <Text className={`${isDarkMode ? "text-white/80" : "text-gray-600"} text-xs font-medium mb-1`}>
+                <Text
+                  className={`${isDarkMode ? "text-white/80" : "text-gray-600"} text-xs font-medium mb-1`}
+                >
                   IPS
                 </Text>
-                <Text className={`${isDarkMode ? "text-white" : "text-gray-800"} text-4xl font-extrabold`}>3.90</Text>
+                <Text
+                  className={`${isDarkMode ? "text-white" : "text-gray-800"} text-4xl font-extrabold`}
+                >
+                  3.90
+                </Text>
               </View>
             </View>
 
             {/* Bottom: OBE Curriculum Indicator */}
-            {isOBE && (
-              <View className={`flex-row justify-between items-center p-3 rounded-2xl border ${isDarkMode ? "bg-white/10 border-white/10" : "bg-white/40 border-white/40"}`}>
+            {/* {isOBE && (
+              <View
+                className={`flex-row justify-between items-center p-3 rounded-2xl border ${isDarkMode ? "bg-white/10 border-white/10" : "bg-white/40 border-white/40"}`}
+              >
                 <View className="flex-row items-center">
-                  <Ionicons name="ribbon" size={20} color={isDarkMode ? "#fbbf24" : "#f59e0b"} />
-                  <Text className={`${isDarkMode ? "text-white" : "text-gray-800"} text-sm ml-2 font-medium`}>
+                  <Ionicons
+                    name="ribbon"
+                    size={20}
+                    color={isDarkMode ? "#fbbf24" : "#f59e0b"}
+                  />
+                  <Text
+                    className={`${isDarkMode ? "text-white" : "text-gray-800"} text-sm ml-2 font-medium`}
+                  >
                     Kurikulum OBE
                   </Text>
                 </View>
-                <TouchableOpacity className={`px-4 py-1.5 rounded-full ${isDarkMode ? "bg-white/20" : "bg-white/60"}`}>
-                  <Text className={`${isDarkMode ? "text-white" : "text-gray-800"} text-xs font-bold`}>
+                <TouchableOpacity
+                  className={`px-4 py-1.5 rounded-full ${isDarkMode ? "bg-white/20" : "bg-white/60"}`}
+                >
+                  <Text
+                    className={`${isDarkMode ? "text-white" : "text-gray-800"} text-xs font-bold`}
+                  >
                     Lihat OBE
                   </Text>
                 </TouchableOpacity>
+              </View>
+            )} */}
+            {isOBE ? (
+              <View
+                className={`flex-row justify-between items-center p-3 rounded-2xl border ${isDarkMode ? "bg-white/10 border-white/10" : "bg-white/40 border-white/40"}`}
+              >
+                <View className="flex-row items-center">
+                  <Ionicons
+                    name="ribbon"
+                    size={20}
+                    color={isDarkMode ? "#fbbf24" : "#f59e0b"}
+                  />
+                  <Text
+                    className={`${isDarkMode ? "text-white" : "text-gray-800"} text-sm ml-2 font-medium`}
+                  >
+                    Kurikulum OBE
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  className={`px-4 py-1.5 rounded-full ${isDarkMode ? "bg-white/20" : "bg-white/60"}`}
+                >
+                  <Text
+                    className={`${isDarkMode ? "text-white" : "text-gray-800"} text-xs font-bold`}
+                  >
+                    Lihat OBE
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              // Tampilan jika Non OBE (isOBE = false)
+              <View
+                className={`flex-row justify-between items-center p-3 rounded-2xl border ${isDarkMode ? "bg-gray-800/40 border-gray-700/50" : "bg-gray-200/50 border-gray-300/50"}`}
+              >
+                <View className="flex-row items-center">
+                  <Ionicons
+                    name="information-circle-outline"
+                    size={20}
+                    color={isDarkMode ? "#9ca3af" : "#6b7280"}
+                  />
+                  <Text
+                    className={`${isDarkMode ? "text-gray-400" : "text-gray-500"} text-sm ml-2 font-medium`}
+                  >
+                    Non OBE
+                  </Text>
+                </View>
               </View>
             )}
           </LinearGradient>
@@ -308,7 +431,7 @@ export default function DashboardScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Assessment Transparancy (Existing Section preserved) */}
+          {/* Assessment Transparancy */}
           <View className="mb-6">
             <Text className={`text-xl font-bold ${textColor} mb-4`}>
               Assessment Transparancy
@@ -371,31 +494,37 @@ export default function DashboardScreen() {
           </View>
         </ScrollView>
 
-        {/* Modal Sidebar (Custom Sliding Menu) */}
-        <Modal
-          visible={sidebarVisible}
-          transparent={true}
-          animationType="none"
-          onRequestClose={closeSidebar}
-        >
-          <View className="flex-1 flex-row">
-            {/* Overlay Area with BlurView */}
-            <Animated.View style={{ ...StyleSheet.absoluteFillObject, opacity: fadeAnim }}>
-              <TouchableOpacity activeOpacity={1} onPress={closeSidebar} style={{ flex: 1 }}>
-                <BlurView 
-                  intensity={20} 
-                  tint={isDarkMode ? "dark" : "light"} 
-                  style={{ flex: 1 }} 
-                />
+        {/* ==================== CUSTOM SIDEBAR WITH BLUR ==================== */}
+        {sidebarVisible && (
+          <>
+            {/* Overlay Area Blur & Dimming */}
+            <Animated.View
+              style={{
+                ...StyleSheet.absoluteFillObject,
+                opacity: fadeAnim,
+                zIndex: 40,
+                backgroundColor: "rgba(0, 0, 0, 0.4)",
+              }}
+            >
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={closeSidebar}
+                style={{ flex: 1 }}
+              >
+                <BlurView intensity={70} tint="dark" style={{ flex: 1 }} />
               </TouchableOpacity>
             </Animated.View>
 
-            {/* Sidebar Content */}
+            {/* Sidebar Slide Content */}
             <Animated.View
               style={{
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                left: 0,
+                width: "75%",
+                zIndex: 50,
                 transform: [{ translateX: slideAnim }],
-                width: '75%',
-                height: '100%'
               }}
               className={`${isDarkMode ? "bg-gray-900" : "bg-white"} p-6 shadow-2xl`}
             >
@@ -403,10 +532,7 @@ export default function DashboardScreen() {
                 <Text className={`text-2xl font-bold ${textColor}`}>
                   Menu Utama
                 </Text>
-                <TouchableOpacity
-                  onPress={closeSidebar}
-                  className="p-2"
-                >
+                <TouchableOpacity onPress={closeSidebar} className="p-2">
                   <Ionicons
                     name="close"
                     size={28}
@@ -459,8 +585,9 @@ export default function DashboardScreen() {
                 </Text>
               </TouchableOpacity>
             </Animated.View>
-          </View>
-        </Modal>
+          </>
+        )}
+        {/* ================================================================== */}
 
         {/* Modal Dropdown Profil */}
         <Modal
@@ -563,6 +690,69 @@ export default function DashboardScreen() {
                   Keluar Akun
                 </Text>
               </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+        {/* Modal Dropdown Pilihan Semester */}
+        <Modal
+          visible={semesterModalVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setSemesterModalVisible(false)}
+        >
+          <TouchableOpacity
+            className="flex-1 bg-black/30 justify-center items-center px-5"
+            activeOpacity={1}
+            onPress={() => setSemesterModalVisible(false)}
+          >
+            <View
+              className={`w-full max-w-xs rounded-3xl p-5 shadow-2xl ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
+            >
+              <View className="flex-row justify-between items-center mb-4 pb-3 border-b border-gray-100">
+                <Text className={`text-lg font-bold ${textColor}`}>
+                  Pilih Semester
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setSemesterModalVisible(false)}
+                >
+                  <Ionicons name="close" size={24} color="#9ca3af" />
+                </TouchableOpacity>
+              </View>
+
+              {dummy_semester.map((semester, index) => {
+                const isSelected = activeSemester === semester;
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => {
+                      setActiveSemester(semester);
+                      setSemesterModalVisible(false);
+                      // TODO: Nantinya di sini bisa ditambah fungsi untuk fetch ulang API
+                      // berdasarkan semester yang dipilih, misal: fetchDashboardData(semester)
+                    }}
+                    className={`py-3 px-4 rounded-2xl mb-2 flex-row justify-between items-center ${
+                      isSelected
+                        ? isDarkMode
+                          ? "bg-[#3173C4]/20"
+                          : "bg-[#e0e7ff]"
+                        : ""
+                    }`}
+                  >
+                    <Text
+                      className={`text-sm font-medium ${isSelected ? "text-[#3173C4]" : textColor}`}
+                    >
+                      {semester}
+                    </Text>
+                    {isSelected && (
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={22}
+                        color="#3173C4"
+                      />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </TouchableOpacity>
         </Modal>

@@ -1,7 +1,7 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
+import { StyleSheet, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function JadwalScreen() {
   return (
@@ -12,7 +12,7 @@ export default function JadwalScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <Text style={styles.text}>Halaman Jadwal</Text>
+        <Text style={styles.text}>Halaman Kalender Akademik</Text>
       </LinearGradient>
     </SafeAreaView>
   );
