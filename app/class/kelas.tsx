@@ -210,16 +210,16 @@ export default function KelasScreen() {
               <View
                 style={[styles.summaryCard, { borderLeftColor: "#3173C4" }]}
               >
-                <Text style={styles.summaryTitle}>Total SKS Max</Text>
+                <Text style={styles.summaryTitle}>Ketercapaian OBE</Text>
                 <View style={styles.summaryValueRow}>
-                  <Text style={styles.summaryNumber}>24</Text>
-                  <Text style={styles.summaryUnit}> SKS</Text>
+                  <Text style={styles.summaryNumber}>100</Text>
+                  <Text className="font-semibold color-gray-500"> % </Text>
                 </View>
               </View>
               <View
                 style={[styles.summaryCard, { borderLeftColor: "#10b981" }]}
               >
-                <Text style={styles.summaryTitle}>SKS Diambil</Text>
+                <Text style={styles.summaryTitle}>Total SKS</Text>
                 <View style={styles.summaryValueRow}>
                   <Text style={styles.summaryNumber}>21</Text>
                   <Text style={styles.summaryUnit}> SKS</Text>

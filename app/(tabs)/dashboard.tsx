@@ -26,6 +26,12 @@ interface UserData {
   prodi: string;
 }
 
+interface menuType {
+  id: number;
+  title: string;
+  icon: React.ComponentProps<typeof Ionicons>["name"];
+}
+
 export default function DashboardScreen() {
   const tabBarTinggi = useBottomTabBarHeight();
   const router = useRouter();
@@ -39,14 +45,12 @@ export default function DashboardScreen() {
     "2023/2024 Genap",
     "2023/2024 Ganjil",
   ];
-  const menu = [
-    "Dashboard",
-    "Kelas Saya",
-    "Dosen PA",
-    "KRS & KHS",
-    "Jadwal & Presensi",
-    "Ujian CBT",
-    "Kurikulum",
+  const menus: menuType[] = [
+    { id: 1, title: "Dashboard", icon: "home-outline" },
+    { id: 2, title: "Kelas Saya", icon: "book-outline" },
+    { id: 3, title: "KRS & KHS", icon: "receipt-outline" },
+    { id: 4, title: "Jadwal & Presensi", icon: "today-outline" },
+    { id: 5, title: "Ujian CBT", icon: "desktop-outline" },
   ];
   const [activeSemester, setActiveSemester] = useState(dummy_semester[0]);
   const [semesterModalVisible, setSemesterModalVisible] = useState(false);
@@ -540,50 +544,24 @@ export default function DashboardScreen() {
                   />
                 </TouchableOpacity>
               </View>
-
-              <TouchableOpacity className="flex-row items-center mb-6 py-2">
-                <Ionicons
-                  name="home-outline"
-                  size={24}
-                  color={isDarkMode ? "#d1d5db" : "#4b5563"}
-                />
-                <Text className={`text-lg ml-4 font-medium ${textColor}`}>
-                  Beranda
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity className="flex-row items-center mb-6 py-2">
-                <Ionicons
-                  name="book-outline"
-                  size={24}
-                  color={isDarkMode ? "#d1d5db" : "#4b5563"}
-                />
-                <Text className={`text-lg ml-4 font-medium ${textColor}`}>
-                  Jadwal & Kelas
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity className="flex-row items-center mb-6 py-2">
-                <Ionicons
-                  name="stats-chart-outline"
-                  size={24}
-                  color={isDarkMode ? "#d1d5db" : "#4b5563"}
-                />
-                <Text className={`text-lg ml-4 font-medium ${textColor}`}>
-                  Transkrip Nilai
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity className="flex-row items-center mb-6 py-2">
-                <Ionicons
-                  name="settings-outline"
-                  size={24}
-                  color={isDarkMode ? "#d1d5db" : "#4b5563"}
-                />
-                <Text className={`text-lg ml-4 font-medium ${textColor}`}>
-                  Pengaturan
-                </Text>
-              </TouchableOpacity>
+              {/* ISI SIDEBAR MENU */}
+              {menus.map((item) => {
+                return (
+                  <TouchableOpacity
+                    key={item.id}
+                    className="flex-row items-center mb-6 py-2"
+                  >
+                    <Ionicons
+                      name={item.icon}
+                      size={24}
+                      color={isDarkMode ? "#d1d5db" : "#4b5563"}
+                    />
+                    <Text className="ml-4 text-base font-medium text-gray-500 dark:text-gray-300">
+                      {item.title}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </Animated.View>
           </>
         )}
