@@ -1,3 +1,4 @@
+import ChartAcademic from "@/src/components/chartAcademic";
 import { Ionicons } from "@expo/vector-icons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
@@ -362,6 +363,8 @@ export default function DashboardScreen() {
             )}
           </LinearGradient>
 
+          {/* Bagian grafik Line */}
+          <ChartAcademic />
           {/* Row of Two Cards: Total Kelas & Tugas Pending */}
           <View className="flex-row justify-between mb-8 space-x-4">
             <View
