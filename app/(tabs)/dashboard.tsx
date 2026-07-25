@@ -364,7 +364,7 @@ export default function DashboardScreen() {
           </LinearGradient>
 
           {/* Bagian grafik Line */}
-          <ChartAcademic />
+          <ChartAcademic isDarkMode={isDarkMode} />
           {/* Row of Two Cards: Total Kelas & Tugas Pending */}
           <View className="flex-row justify-between mb-8 space-x-4">
             <View
