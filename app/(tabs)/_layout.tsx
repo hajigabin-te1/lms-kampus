@@ -1,9 +1,12 @@
+import { useNotificationStore } from "@/src/stores/notificationStore";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
 import { Platform, TouchableOpacity, View } from "react-native";
 
 export default function TabsLayout() {
+  const unreadCount = useNotificationStore((state) => state.unreadCount);
+
   return (
     <Tabs
       screenOptions={{
@@ -134,6 +137,13 @@ export default function TabsLayout() {
               color={color}
             />
           ),
+          tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: "#EF4444",
+            color: "#FFFFFF",
+            fontSize: 10,
+            fontWeight: "bold",
+          },
         }}
       />
       <Tabs.Screen
