@@ -3,17 +3,17 @@ import CalendarAcademic from "@/src/components/calendarAcademic";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CalendarScreen() {
   const tabBarHeight = useBottomTabBarHeight();
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <LinearGradient
         colors={["#ECECF8", "#0080FF"]}
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        style={{ flex: 1 }}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
@@ -23,10 +23,10 @@ export default function CalendarScreen() {
         >
           <View className="p-4">
             <Text className="text-xl font-bold text-gray-800 dark:text-white">
-              SIAKAD Mobile
+              LMS Campus
             </Text>
             <Text className="text-sm text-gray-500">
-              Informasi Agenda Kegiatan Kampus
+              Informasi Agenda Kegiatan Kampus STIA Amuntai
             </Text>
           </View>
 
@@ -37,14 +37,14 @@ export default function CalendarScreen() {
     </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ECECF8",
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#ffffff",
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#ECECF8",
+//   },
+//   text: {
+//     fontSize: 24,
+//     fontWeight: "bold",
+//     color: "#ffffff",
+//   },
+// });
