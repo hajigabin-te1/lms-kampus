@@ -1,13 +1,29 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import React from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Ionicons from "@expo/vector-icons/Ionicons";
 
 const menuItems = [
-  { id: "1", title: "Edit Profile", icon: "person-outline", route: "/edit-profile" },
-  { id: "2", title: "Tentang Aplikasi", icon: "information-circle-outline", route: "/about" },
-  { id: "3", title: "Saran & Masukan", icon: "chatbubbles-outline", route: "/feedback" },
+  {
+    id: "1",
+    title: "Edit Profile",
+    icon: "person-outline",
+    route: "/edit-profile",
+  },
+  {
+    id: "2",
+    title: "Tentang Aplikasi",
+    icon: "information-circle-outline",
+    route: "/about",
+  },
+  {
+    id: "3",
+    title: "Saran & Masukan",
+    icon: "chatbubbles-outline",
+    route: "/feedback",
+  },
   { id: "4", title: "FAQ", icon: "help-circle-outline", route: "/faq" },
 ];
 
@@ -38,8 +54,12 @@ export default function ProfileScreen() {
           />
         </View>
         <Text className="text-xl font-bold text-white mb-1">Budi Santoso</Text>
-        <Text className="text-sm text-blue-50 mb-1 font-medium">NIM: 1234567890</Text>
-        <Text className="text-sm text-blue-50 font-medium">Prodi: Teknik Informatika</Text>
+        <Text className="text-sm text-blue-50 mb-1 font-medium">
+          NIM: 1234567890
+        </Text>
+        <Text className="text-sm text-blue-50 font-medium">
+          Prodi: Teknik Informatika
+        </Text>
       </LinearGradient>
     </View>
   );
@@ -55,7 +75,7 @@ export default function ProfileScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => {
-                console.log("Navigating to", item.route);
+                router.push(`${item.route}` as any);
               }}
               className="flex-row items-center px-6 py-4 bg-white mb-3 mx-4 rounded-2xl shadow-sm border border-gray-100"
               activeOpacity={0.7}
