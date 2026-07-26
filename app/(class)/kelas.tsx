@@ -162,6 +162,14 @@ export default function KelasScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
+      {/* HEADER dengan tombol back */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#ffffff', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8 }}>
+        <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 16 }}>
+          <Ionicons name="arrow-back" size={24} color="#1f2937" />
+        </TouchableOpacity>
+        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#1f2937' }}>Kelas Saya</Text>
+      </View>
+
       {/* HEADER TABS */}
       <View style={styles.tabContainer}>
         <TouchableOpacity

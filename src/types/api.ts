@@ -58,3 +58,20 @@ export interface LoginData {
   token: string;
   user: User; // Kita panggil kembali interface User di atas
 }
+
+// Dashboard Interface
+export interface DashboardData {
+  id: number;
+  name: string;
+  email: string;
+  nim: string;
+  prodi: string;
+  ipk: number;
+  ips: number;
+  pembimbing_akademik: string;
+  status_mahasiswa: string;
+  active_semester: string;
+  avaiable_semester: string[];
+  total_kelas: number;
+  tugas_pending: number;
+}

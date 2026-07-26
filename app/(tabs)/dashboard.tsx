@@ -31,6 +31,7 @@ interface menuType {
   id: number;
   title: string;
   icon: React.ComponentProps<typeof Ionicons>["name"];
+  path: string;
 }
 
 export default function DashboardScreen() {
@@ -47,11 +48,16 @@ export default function DashboardScreen() {
     "2023/2024 Ganjil",
   ];
   const menus: menuType[] = [
-    { id: 1, title: "Dashboard", icon: "home-outline" },
-    { id: 2, title: "Kelas Saya", icon: "book-outline" },
-    { id: 3, title: "KRS & KHS", icon: "receipt-outline" },
-    { id: 4, title: "Jadwal & Presensi", icon: "today-outline" },
-    { id: 5, title: "Ujian CBT", icon: "desktop-outline" },
+    { id: 1, title: "Dashboard", icon: "home-outline", path: "/dashboard" },
+    { id: 2, title: "Kelas Saya", icon: "book-outline", path: "/kelas" },
+    { id: 3, title: "KRS & KHS", icon: "receipt-outline", path: "/krs-khs" },
+    {
+      id: 4,
+      title: "Jadwal & Presensi",
+      icon: "today-outline",
+      path: "/presensi",
+    },
+    { id: 5, title: "Ujian CBT", icon: "desktop-outline", path: "/ujian/cbt" },
   ];
   const [activeSemester, setActiveSemester] = useState(dummy_semester[0]);
   const [semesterModalVisible, setSemesterModalVisible] = useState(false);
@@ -333,6 +339,7 @@ export default function DashboardScreen() {
                   </Text>
                 </View>
                 <TouchableOpacity
+                  onPress={() => router.push("/obe" as any)}
                   className={`px-4 py-1.5 rounded-full ${isDarkMode ? "bg-white/20" : "bg-white/60"}`}
                 >
                   <Text
@@ -553,6 +560,9 @@ export default function DashboardScreen() {
                   <TouchableOpacity
                     key={item.id}
                     className="flex-row items-center mb-6 py-2"
+                    onPress={() => {
+                      router.push(`${item.path}` as any);
+                    }}
                   >
                     <Ionicons
                       name={item.icon}
